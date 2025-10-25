@@ -163,9 +163,9 @@ def minimal_task_repr(task: Dict) -> Dict:
     importance = (task.get("importance") or "").lower()
     return {
         "title": task.get("title"),
-        "importance": task.get("importance"),
+        # "importance": task.get("importance"), Removed as it got migrated in "is_starred"
         "is_starred": True if importance == "high" else False,
-        # "status": task.get("status"), Do NOT include checklistItems as it always returns "notStarted"
+        # "status": task.get("status"), Do NOT include status as it always returns "notStarted"
         "categories": task.get("categories"),
         "createdDateTime": task.get("createdDateTime"),
         "dueDateTime": task.get("dueDateTime"),
