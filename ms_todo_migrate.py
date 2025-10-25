@@ -129,7 +129,7 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
                 return (s or "").replace("|", "\\|")
 
             f.write("\n## Subtasks\n\n")
-            f.write("| Checked | Item |\n")
+            f.write("| Status | Item |\n")
             f.write("| --- | --- |\n")
             for it in original_items:
                 checked = it.get("isChecked")
