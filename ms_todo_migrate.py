@@ -20,6 +20,7 @@ import sys
 from typing import Dict, Iterable, List, Optional
 
 import requests
+import yaml
 
 
 def fetch_all(url: str, token: str) -> List[Dict]:
@@ -66,9 +67,71 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
         filename = f"{base}_{counter}.md"
         path = os.path.join(folder, filename)
         counter += 1
+    # original_task is optional; if provided, we'll render checklist items below the note
     with open(path, "w", encoding="utf-8") as f:
-        # Match shell behaviour: write a JSON representation into a .md file
-        json.dump(task_json, f, ensure_ascii=False, indent=2)
+        # Write Obsidian-compatible YAML frontmatter (properties)
+        # Use PyYAML to emit a readable YAML block; keep keys order for readability
+        # Exclude any internal checklist items from the frontmatter properties
+        frontmatter_data = None
+        try:
+            frontmatter_data = dict(task_json) if isinstance(task_json, dict) else task_json
+            if isinstance(frontmatter_data, dict):
+                frontmatter_data.pop("_checklistItems", None)
+            yaml_str = yaml.safe_dump(frontmatter_data, allow_unicode=True, sort_keys=False)
+        except Exception:
+            # Fallback: use a JSON dump inside the frontmatter if YAML serialization fails
+            # Ensure checklist items are excluded from the fallback as well
+            fm = dict(task_json) if isinstance(task_json, dict) else task_json
+            if isinstance(fm, dict):
+                fm.pop("_checklistItems", None)
+            yaml_str = json.dumps(fm, ensure_ascii=False, indent=2)
+
+        f.write("---\n")
+        f.write(yaml_str)
+        f.write("---\n\n")
+
+        # If the task has a body content (common in MS To Do), append it as the note
+        body = None
+        if isinstance(task_json, dict):
+            b = task_json.get("body")
+            if isinstance(b, dict):
+                body = b.get("content")
+
+        if body:
+            # Write the body content as markdown
+            f.write(str(body))
+            if not str(body).endswith("\n"):
+                f.write("\n")
+        else:
+            # Otherwise include the full JSON for reference in a fenced code block
+            f.write("```json\n")
+            json.dump(task_json, f, ensure_ascii=False, indent=2)
+            f.write("\n```\n")
+
+        # Render checklist items (if any) as a Markdown table under a "## Subtasks" heading.
+        # Only use `isChecked` and `displayName` fields.
+        original_items = None
+        # The caller may embed original checklist items into a special key; check for that first
+        if isinstance(task_json, dict):
+            original_items = task_json.get("_checklistItems")
+        # If not present, see if the calling code passed a separate list via a local variable
+        if not original_items:
+            # No checklist items to render
+            original_items = None
+
+        if original_items and isinstance(original_items, list) and len(original_items) > 0:
+            def esc(s: str) -> str:
+                return (s or "").replace("|", "\\|")
+
+            f.write("\n## Subtasks\n\n")
+            f.write("| Checked | Item |\n")
+            f.write("| --- | --- |\n")
+            for it in original_items:
+                checked = it.get("isChecked")
+                # Normalize to 'true'/'false'
+                checked_str = str(bool(checked)).lower()
+                display = esc(it.get("displayName") or "")
+                f.write(f"| {checked_str} | {display} |\n")
     return path
 
 
@@ -83,7 +146,7 @@ def minimal_task_repr(task: Dict) -> Dict:
         "body": task.get("body"),
         "completedDateTime": task.get("completedDateTime"),
         "reminderDateTime": task.get("reminderDateTime"),
-        "checklistItems": task.get("checklistItems"),
+        # Do NOT include checklistItems here; they will be rendered in the markdown body
     }
 
 
@@ -135,6 +198,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                 continue
             filename_base = safe_filename(title)
             payload = minimal_task_repr(task)
+            # Attach checklist items under an internal key so they are NOT included in frontmatter
+            payload["_checklistItems"] = task.get("checklistItems")
             path = write_task_file(list_folder, filename_base, payload)
             migrated_count += 1
             print(f"Wrote task '{title}' -> {path}")
