@@ -160,9 +160,11 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
 
 
 def minimal_task_repr(task: Dict) -> Dict:
+    importance = (task.get("importance") or "").lower()
     return {
         "title": task.get("title"),
         "importance": task.get("importance"),
+        "is_starred": True if importance == "high" else False,
         # "status": task.get("status"), Do NOT include checklistItems as it always returns "notStarted"
         "categories": task.get("categories"),
         "createdDateTime": task.get("createdDateTime"),
