@@ -133,8 +133,8 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
             f.write("| --- | --- |\n")
             for it in original_items:
                 checked = it.get("isChecked")
-                # Normalize to 'true'/'false'
-                checked_str = str(bool(checked)).lower()
+                # Convert boolean to "done" or "to do"
+                checked_str = "done" if checked else "to do"
                 display = esc(it.get("displayName") or "")
                 f.write(f"| {checked_str} | {display} |\n")
             f.write("\n")  # Add blank line after table
