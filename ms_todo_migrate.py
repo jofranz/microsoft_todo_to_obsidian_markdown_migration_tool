@@ -113,24 +113,6 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
         f.write(yaml_str)
         f.write("---\n\n")
 
-        # If the task has a body content (common in MS To Do), append it as the note
-        body = None
-        if isinstance(task_json, dict):
-            b = task_json.get("body")
-            if isinstance(b, dict):
-                body = b.get("content")
-
-        if body:
-            # Write the body content as markdown
-            f.write(str(body))
-            if not str(body).endswith("\n"):
-                f.write("\n")
-        else:
-            # Otherwise include the full JSON for reference in a fenced code block
-            f.write("```json\n")
-            json.dump(task_json, f, ensure_ascii=False, indent=2)
-            f.write("\n```\n")
-
         # Render checklist items (if any) as a Markdown table under a "## Subtasks" heading.
         # Only use `isChecked` and `displayName` fields.
         original_items = None
@@ -155,6 +137,25 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
                 checked_str = str(bool(checked)).lower()
                 display = esc(it.get("displayName") or "")
                 f.write(f"| {checked_str} | {display} |\n")
+            f.write("\n")  # Add blank line after table
+
+        # If the task has a body content (common in MS To Do), append it as the note
+        body = None
+        if isinstance(task_json, dict):
+            b = task_json.get("body")
+            if isinstance(b, dict):
+                body = b.get("content")
+
+        if body:
+            # Write the body content as markdown
+            f.write(str(body))
+            if not str(body).endswith("\n"):
+                f.write("\n")
+        else:
+            # Otherwise include the full JSON for reference in a fenced code block
+            f.write("```json\n")
+            json.dump(task_json, f, ensure_ascii=False, indent=2)
+            f.write("\n```\n")
     return path
 
 
