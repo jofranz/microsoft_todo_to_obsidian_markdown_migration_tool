@@ -163,7 +163,7 @@ def minimal_task_repr(task: Dict) -> Dict:
     return {
         "title": task.get("title"),
         "importance": task.get("importance"),
-        "status": task.get("status"),
+        # "status": task.get("status"), Do NOT include checklistItems as it always returns "notStarted"
         "categories": task.get("categories"),
         "createdDateTime": task.get("createdDateTime"),
         "dueDateTime": task.get("dueDateTime"),
