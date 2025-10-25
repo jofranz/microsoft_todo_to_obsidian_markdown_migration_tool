@@ -166,7 +166,7 @@ def minimal_task_repr(task: Dict) -> Dict:
         # "importance": task.get("importance"), Removed as it got migrated in "is_starred"
         "is_starred": True if importance == "high" else False,
         # "status": task.get("status"), Do NOT include status as it always returns "notStarted"
-        "categories": task.get("categories"),
+        # "categories": task.get("categories"), Do NOT include status as it's array is always empty
         "createdDateTime": task.get("createdDateTime"),
         "dueDateTime": task.get("dueDateTime"),
         "body": task.get("body"),
