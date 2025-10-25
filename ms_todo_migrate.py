@@ -46,6 +46,29 @@ def fetch_all(url: str, token: str) -> List[Dict]:
     return items
 
 
+def validate_token(token: str) -> tuple[bool, Optional[str]]:
+    """Quickly validate a Microsoft Graph bearer token by calling /me.
+
+    Returns (True, None) on success. On failure returns (False, message) where message
+    gives a short diagnostic (status code and reason).
+    """
+    if not token:
+        return False, "no token provided"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    try:
+        resp = requests.get("https://graph.microsoft.com/v1.0/me", headers=headers, timeout=10)
+    except requests.RequestException as e:
+        return False, f"request error: {e}"
+    if resp.status_code == 200:
+        return True, None
+    # Provide helpful diagnostics for common cases (401/403)
+    if resp.status_code == 401:
+        return False, "401 Unauthorized: token may be expired or invalid"
+    if resp.status_code == 403:
+        return False, "403 Forbidden: token may be missing required scopes"
+    return False, f"{resp.status_code} {resp.reason}"
+
+
 def safe_filename(title: str) -> str:
     # Replace slashes, colons and whitespace with underscores; keep it short
     s = re.sub(r"[:/\\\s]+", "_", title)
@@ -158,11 +181,29 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--skip-completed", help="Skip completed tasks", action="store_true")
     p.add_argument("--source-base", help="Source lists base URL",
                    default="https://graph.microsoft.com/v1.0/me/todo/lists")
+    p.add_argument("--validate-token", help="Validate source token and exit (no migration)", action="store_true")
     args = p.parse_args(argv)
 
     source_token = args.source_token
     output_folder = args.output_folder
     skip_completed = args.skip_completed
+
+    # If requested, validate token and exit with status 0 on success, non-zero on failure.
+    if args.validate_token:
+        ok, msg = validate_token(source_token)
+        if ok:
+            print("Token appears valid.")
+            return 0
+        else:
+            print("Token validation failed:", msg, file=sys.stderr)
+            return 3
+
+    # Early validation to give a clearer error message if token is invalid/expired.
+    ok, msg = validate_token(source_token)
+    if not ok:
+        print("Failed to validate source token:", msg, file=sys.stderr)
+        print("If your token is a short-lived OAuth token it may have expired. Obtain a new bearer token and retry.")
+        return 3
 
     print("Fetching source lists...")
     try:
