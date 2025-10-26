@@ -56,3 +56,11 @@ Notes
 - The output files are JSON dumped into `.md` files (keeps parity with the previous script which wrote JSON into files ending with `.md`).
 
 If you want me to also implement creating tasks in the destination account (POST to Graph), tell me and I will add that and the required safety checks.
+
+## Features to implement
+Some features aren't implemented yet. Such as:
+- [X] Transform `JSON` to `.md` format
+- [] Implement nested folders
+- [] Strip non-unix file system characters as they might be crashing on other file systems
+- [] Add optional prefix property to all notes which states MsToDo
+- [X] replace every "?" with "_"
