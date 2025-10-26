@@ -1,5 +1,10 @@
 # MS To Do migration (shell -> Python)
 
+## Motivation
+Microsoft To Do's data export (takeout) process appears to be broken. I started by porting https://github.com/Shadoxity/Scripts into a shell script, and then refactored that into this Python script to make it more robust and easier to use.
+
+## Install
+
 This repository contains a Python refactor of `MS-Todo-Migrate-to-another-account.sh`.
 
 Files added:
