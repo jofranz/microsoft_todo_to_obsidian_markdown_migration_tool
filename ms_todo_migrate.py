@@ -70,9 +70,10 @@ def validate_token(token: str) -> tuple[bool, Optional[str]]:
 
 
 def safe_filename(title: str) -> str:
-    # Replace slashes, colons and whitespace with underscores; keep it short
-    s = re.sub(r"[:/\\\s]+", "_", title)
-    s = s.strip("_\n\r")
+    # First replace each ? with _ (including at start/end of filename)
+    s = title.replace("?", "_")
+    # Then handle other special characters
+    s = re.sub(r"[:/\\\s]+", "_", s)
     if not s:
         s = "untitled"
     # Ensure filename is not too long
