@@ -7,12 +7,12 @@ Microsoft To Do's data export (takeout) process appears to be broken. I started 
 
 This repository contains a Python refactor of `MS-Todo-Migrate-to-another-account.sh`.
 
-Files added:
+Important files:
 
 - `ms_todo_migrate.py` — Python script that fetches lists and tasks from Microsoft Graph and writes each task to a `.md` file under an output folder.
-- `requirements.txt` — lists `requests`.
+- `requirements.txt` — lists `requests` and `PyYAML` for YAML frontmatter support.
 
-Quick start
+## Quick start
 
 There are two common ways to run the script. The recommended approach for CLI tools is to use pipx; if you prefer a simple local setup, use a virtual environment.
 
@@ -53,14 +53,26 @@ python3 ms_todo_migrate.py --source-token "<SOURCE_TOKEN>" --output-folder out -
 Notes
 
 - The script only reads from the source account. Destination operations from the original shell script were commented out; this refactor preserves that behavior and writes tasks to local files.
-- The output files are JSON dumped into `.md` files (keeps parity with the previous script which wrote JSON into files ending with `.md`).
+- Tasks are exported as Markdown files with YAML frontmatter (Obsidian properties).
+- Each task includes:
+  - YAML frontmatter with task properties
+  - Subtasks table (if any checklist items exist)
+  - Task body content (if any) or JSON representation
+- Filenames are sanitized:
+  - Each "?" is replaced with "_" (preserving position)
+  - Special characters and spaces become underscores
+  - Dots in filenames are preserved
 
-If you want me to also implement creating tasks in the destination account (POST to Graph), tell me and I will add that and the required safety checks.
+## Features (implemented and open)
+Completed features:
+- [x] Transform tasks to Obsidian-compatible markdown with YAML frontmatter
+- [x] Render checklist items as a "Subtasks" table
+- [x] Replace each "?" with "_" in filenames
+- [x] Convert importance "high" to boolean property "is_starred"
+- [x] Token validation with helpful error messages
 
-## Features to implement
-Some features aren't implemented yet. Such as:
-- [X] Transform `JSON` to `.md` format
-- [] Implement nested folders
-- [] Strip non-unix file system characters as they might be crashing on other file systems
-- [] Add optional prefix property to all notes which states MsToDo
-- [X] replace every "?" with "_"
+Not implemented features:
+- [ ] Implement nested folders for task organization
+- [ ] Add optional prefix property to all notes to indicate MsToDo source
+- [ ] Support for destination account operations (task creation via Graph API)
+- [ ] Add task categorization support
