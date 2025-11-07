@@ -84,13 +84,18 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
     os.makedirs(folder, exist_ok=True)
     filename = f"{filename_base}.md"
     path = os.path.join(folder, filename)
-    # Avoid overwriting if duplicate title exists: append a counter
-    counter = 1
-    base = filename_base
-    while os.path.exists(path):
-        filename = f"{base}_{counter}.md"
+    # Try with _from_ms_todo suffix first
+    if os.path.exists(path):
+        base = filename_base
+        filename = f"{base}_from_ms_todo.md"
         path = os.path.join(folder, filename)
-        counter += 1
+        
+        # If that also exists, start adding numbers starting from 2
+        counter = 2
+        while os.path.exists(path):
+            filename = f"{base}_from_ms_todo_{counter}.md"
+            path = os.path.join(folder, filename)
+            counter += 1
     # original_task is optional; if provided, we'll render checklist items below the note
     with open(path, "w", encoding="utf-8") as f:
         # Write Obsidian-compatible YAML frontmatter (properties)
