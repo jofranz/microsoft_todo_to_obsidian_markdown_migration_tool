@@ -159,7 +159,7 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
                 f.write("\n")
         else:
             # If no body content, add a marker indicating no imported text
-            f.write("#ms_todo_no_imported_text\n")
+            f.write("\n#ms_todo_no_imported_text\n")
     return path
 
 
