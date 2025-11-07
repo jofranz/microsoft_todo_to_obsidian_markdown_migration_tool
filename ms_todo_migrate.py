@@ -163,16 +163,45 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
     return path
 
 
+def extract_date(datetime_str: Optional[str]) -> Optional[str]:
+    """Extract the date part from an ISO datetime string.
+    
+    Args:
+        datetime_str: ISO datetime string like "2025-11-07T14:30:00Z"
+        
+    Returns:
+        Just the date part ("2025-11-07") or None if input is None.
+        For dates ending in ".0000000", returns the next day.
+        #todo check if this still works in summertime
+    """
+    if not datetime_str:
+        return None
+        
+    # Split at 'T' to get just the date part
+    date_part = datetime_str.split('T')[0]
+    
+    # If time ends in all zeros, add one day
+    if ".0000000" in datetime_str:
+        # Convert to date object, add one day, then back to string
+        year, month, day = map(int, date_part.split('-'))
+        from datetime import date, timedelta
+        d = date(year, month, day) + timedelta(days=1)
+        return d.isoformat()
+        
+    return date_part
+
+
 def minimal_task_repr(task: Dict) -> Dict:
     importance = (task.get("importance") or "").lower()
+
     return {
         "title": task.get("title"),
         # "importance": task.get("importance"), Removed as it got migrated in "is_starred"
         "is_starred": True if importance == "high" else False,
         # "status": task.get("status"), Do NOT include status as it always returns "notStarted"
         # "categories": task.get("categories"), Do NOT include status as it's array is always empty
-        "createdDateTime": task.get("createdDateTime"),
-        "dueDateTime": task.get("dueDateTime"),
+        "created": extract_date(task.get("createdDateTime")),
+        "due": extract_date(task.get("dueDateTime")),
         "body": task.get("body"),
         "completedDateTime": task.get("completedDateTime"),
         "reminderDateTime": task.get("reminderDateTime"),
