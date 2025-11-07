@@ -27,6 +27,10 @@ python3 -m pipx ensurepath
 
 2. If you package this project (add a `pyproject.toml` or `setup.py` and a console entry point), you can install it into an isolated environment managed by pipx:
 
+https://developer.microsoft.com/en-us/graph/graph-explorer
+
+
+
 ```bash
 # from the project root (after making the project installable)
 pipx install .
@@ -70,9 +74,11 @@ Completed features:
 - [x] Replace each "?" with "_" in filenames
 - [x] Convert importance "high" to boolean property "is_starred"
 - [x] Token validation with helpful error messages
+- [x] Add postfix to filenames instead of overwriting them
 
 Not implemented features:
 - [ ] Implement nested folders for task organization
-- [ ] Add optional prefix property to all notes to indicate MsToDo source
+- [ ] Add optional prefix/postfix property to all notes to indicate MsToDo source
 - [ ] Support for destination account operations (task creation via Graph API)
 - [ ] Add task categorization support
+- [ ] Verify date handling for tasks with .0000000 timestamps. Check if the are still correct in summer time
