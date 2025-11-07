@@ -153,10 +153,8 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
             if not str(body).endswith("\n"):
                 f.write("\n")
         else:
-            # Otherwise include the full JSON for reference in a fenced code block
-            f.write("```json\n")
-            json.dump(task_json, f, ensure_ascii=False, indent=2)
-            f.write("\n```\n")
+            # If no body content, add a marker indicating no imported text
+            f.write("#ms_todo_no_imported_text\n")
     return path
 
 
