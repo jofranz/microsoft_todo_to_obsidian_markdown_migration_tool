@@ -221,7 +221,6 @@ def minimal_task_repr(task: Dict) -> Dict:
 def main(argv: Optional[List[str]] = None) -> int:
     p = argparse.ArgumentParser(description="Migrate MS To Do tasks to files (Python refactor)")
     p.add_argument("--source-token", help="Source account bearer token", required=True)
-    p.add_argument("--dest-token", help="Destination account bearer token (not used, optional)", default="")
     p.add_argument("--output-folder", help="Output folder for exported tasks", default="out")
     p.add_argument("--skip-completed", help="Skip completed tasks", action="store_true")
     p.add_argument("--source-base", help="Source lists base URL",
