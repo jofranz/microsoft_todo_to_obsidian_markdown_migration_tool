@@ -77,6 +77,7 @@ Completed:
 - [x] Add postfix to filenames instead of overwriting them
 - [x] Move deleted files in a foldername/delted folder if --skip-completed isn't set
 - [x] Remove completedDateTime and reminderDateTime if not set
+- [x] Use checkbox items for subtask visualisation
 
 Not implemented (yet):
 - [ ] Implement nested folders for task organization

@@ -146,14 +146,11 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
                 return (s or "").replace("|", "\\|")
 
             f.write("## Subtasks\n\n")
-            f.write("| Status | Item |\n")
-            f.write("| --- | --- |\n")
             for it in original_items:
                 checked = it.get("isChecked")
-                # Convert boolean to "done" or "to do"
-                checked_str = "done" if checked else "to do"
-                display = esc(it.get("displayName") or "")
-                f.write(f"| {checked_str} | {display} |\n")
+                checkbox = "- [x]" if checked else "- [ ]"
+                item_content = esc(it.get("displayName") or "")
+                f.write(f"{checkbox} {item_content}\n")
             f.write("\n---\n")  # Add horizontal rule after table
 
         # If the task has a body content (common in MS To Do), append it as the note
