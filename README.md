@@ -75,6 +75,7 @@ Completed features:
 - [x] Convert importance "high" to boolean property "is_starred"
 - [x] Token validation with helpful error messages
 - [x] Add postfix to filenames instead of overwriting them
+- [x] Move deleted files in a foldername/delted folder if --skip-completed isn't set
 
 Not implemented features:
 - [ ] Implement nested folders for task organization

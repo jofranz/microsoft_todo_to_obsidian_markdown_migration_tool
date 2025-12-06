@@ -274,13 +274,24 @@ def main(argv: Optional[List[str]] = None) -> int:
         for task in tasks:
             status = task.get("status")
             title = task.get("title") or "untitled"
-            if skip_completed and status == "completed":
+            
+            # Determine the target folder based on task status
+            is_completed = status == "completed"
+            if is_completed and skip_completed:
+                # Skip completed tasks if requested
                 continue
+            
+            # Use "deleted" subfolder for completed tasks, main folder otherwise
+            if is_completed and not skip_completed:
+                target_folder = os.path.join(list_folder, "deleted")
+            else:
+                target_folder = list_folder
+            
             filename_base = safe_filename(title)
             payload = minimal_task_repr(task)
             # Attach checklist items under an internal key so they are NOT included in frontmatter
             payload["_checklistItems"] = task.get("checklistItems")
-            path = write_task_file(list_folder, filename_base, payload)
+            path = write_task_file(target_folder, filename_base, payload)
             migrated_count += 1
             print(f"Wrote task '{title}' -> {path}")
 
