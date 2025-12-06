@@ -206,8 +206,8 @@ def minimal_task_repr(task: Dict) -> Dict:
         "created": extract_date(task.get("createdDateTime")),
         "due": extract_date(task.get("dueDateTime")),
         "body": task.get("body"),
-        "completedDateTime": task.get("completedDateTime"),
-        "reminderDateTime": task.get("reminderDateTime"),
+        "completedDateTime": extract_date(task.get("completedDateTime")),
+        "reminderDateTime": extract_date(task.get("reminderDateTime")),
         # Do NOT include checklistItems here; they will be rendered in the markdown body
     }
 
