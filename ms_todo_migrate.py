@@ -100,19 +100,21 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
     with open(path, "w", encoding="utf-8") as f:
         # Write Obsidian-compatible YAML frontmatter (properties)
         # Use PyYAML to emit a readable YAML block; keep keys order for readability
-        # Exclude any internal checklist items from the frontmatter properties
+        # Exclude any internal checklist items and body from the frontmatter properties
         frontmatter_data = None
         try:
             frontmatter_data = dict(task_json) if isinstance(task_json, dict) else task_json
             if isinstance(frontmatter_data, dict):
                 frontmatter_data.pop("_checklistItems", None)
+                frontmatter_data.pop("body", None)
             yaml_str = yaml.safe_dump(frontmatter_data, allow_unicode=True, sort_keys=False)
         except Exception:
             # Fallback: use a JSON dump inside the frontmatter if YAML serialization fails
-            # Ensure checklist items are excluded from the fallback as well
+            # Ensure checklist items and body are excluded from the fallback as well
             fm = dict(task_json) if isinstance(task_json, dict) else task_json
             if isinstance(fm, dict):
                 fm.pop("_checklistItems", None)
+                fm.pop("body", None)
             yaml_str = json.dumps(fm, ensure_ascii=False, indent=2)
 
         f.write("---\n")
