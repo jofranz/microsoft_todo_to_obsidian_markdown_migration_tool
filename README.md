@@ -67,6 +67,12 @@ Notes
   - Special characters and spaces become underscores
   - Dots in filenames are preserved
 
+## Validation and debugging
+These values are replacement values for empty outputs. Empty outputs can be a sign for information loss or malfunction of this script 
+- "no title"
+- "untitled"
+- "no item content"
+
 ## Features
 Completed:
 - [x] Transform tasks to Obsidian-compatible markdown with YAML frontmatter
@@ -78,6 +84,7 @@ Completed:
 - [x] Move deleted files in a foldername/delted folder if --skip-completed isn't set
 - [x] Remove completedDateTime and reminderDateTime if not set
 - [x] Use checkbox items for subtask visualisation
+- [x] Removes new lines out of task names and subtask items
 
 Not implemented (yet):
 - [ ] Implement nested folders for task organization

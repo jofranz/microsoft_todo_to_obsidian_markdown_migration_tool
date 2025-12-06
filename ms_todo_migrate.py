@@ -149,7 +149,7 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
             for it in original_items:
                 checked = it.get("isChecked")
                 checkbox = "- [x]" if checked else "- [ ]"
-                item_content = esc(it.get("displayName") or "")
+                item_content = esc(it.get("displayName") or "no item content").replace("\n", " ")
                 f.write(f"{checkbox} {item_content}\n")
             f.write("\n---\n")  # Add horizontal rule after table
 
@@ -204,7 +204,7 @@ def minimal_task_repr(task: Dict) -> Dict:
     importance = (task.get("importance") or "").lower()
 
     return {
-        "title": task.get("title"),
+        "title": (task.get("title") or "no title").replace("\n", " "),
         # "importance": task.get("importance"), Removed as it got migrated in "is_starred"
         "is_starred": True if importance == "high" else False,
         # "status": task.get("status"), Do NOT include status as it always returns "notStarted"
