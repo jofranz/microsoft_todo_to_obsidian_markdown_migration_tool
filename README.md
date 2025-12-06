@@ -83,4 +83,4 @@ Not implemented features:
 - [ ] Add optional prefix/postfix property to all notes to indicate MsToDo source
 - [ ] Support for destination account operations (task creation via Graph API)
 - [ ] Add task categorization support
-- [ ] Verify date handling for tasks with .0000000 timestamps. Check if the are still correct in summer time
+- [ ] Verify date handling for tasks with .0000000 timestamps. Check if they are still correct in summer time
