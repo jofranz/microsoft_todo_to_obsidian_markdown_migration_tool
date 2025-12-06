@@ -163,25 +163,26 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
     return path
 
 
-def extract_date(datetime_str: Optional[str]) -> Optional[str]:
-    """Extract the date part from an ISO datetime string.
-    
-    Args:
-        datetime_str: ISO datetime string like "2025-11-07T14:30:00Z"
-        
-    Returns:
-        Just the date part ("2025-11-07") or None if input is None.
-        For dates ending in ".0000000", returns the next day.
-        #todo check if this still works in summertime
-    """
-    if not datetime_str:
+def extract_date(dt):
+    # No date available
+    if not dt:
         return None
-        
-    # Split at 'T' to get just the date part
-    date_part = datetime_str.split('T')[0]
-    
+
+    # Case: Microsoft Graph returns { "dateTime": "...", "timeZone": "..." }
+    if isinstance(dt, dict):
+        dt = dt.get("dateTime")
+
+    # Check again in case "dateTime" was not present
+    if not dt:
+        return None
+
+    # Now dt should be an ISO string
+    # Example: "2022-03-29T17:23:26.4057307Z"
+
+
     # If time ends in all zeros, add one day
-    if ".0000000" in datetime_str:
+    date_part = dt.split("T")[0]
+    if ".0000000" in dt:
         # Convert to date object, add one day, then back to string
         year, month, day = map(int, date_part.split('-'))
         from datetime import date, timedelta
