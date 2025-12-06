@@ -107,6 +107,11 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
             if isinstance(frontmatter_data, dict):
                 frontmatter_data.pop("_checklistItems", None)
                 frontmatter_data.pop("body", None)
+                # Remove empty completedDateTime and reminderDateTime
+                for drop_key in ("completedDateTime", "reminderDateTime"):
+                    val = frontmatter_data.get(drop_key)
+                    if val is None or val == "" or (isinstance(val, dict) and not val):
+                        frontmatter_data.pop(drop_key, None)
             yaml_str = yaml.safe_dump(frontmatter_data, allow_unicode=True, sort_keys=False)
         except Exception:
             # Fallback: use a JSON dump inside the frontmatter if YAML serialization fails
@@ -115,6 +120,10 @@ def write_task_file(folder: str, filename_base: str, task_json: Dict) -> str:
             if isinstance(fm, dict):
                 fm.pop("_checklistItems", None)
                 fm.pop("body", None)
+                for drop_key in ("completedDateTime", "reminderDateTime"):
+                    val = fm.get(drop_key)
+                    if val is None or val == "" or (isinstance(val, dict) and not val):
+                        fm.pop(drop_key, None)
             yaml_str = json.dumps(fm, ensure_ascii=False, indent=2)
 
         f.write("---\n")
