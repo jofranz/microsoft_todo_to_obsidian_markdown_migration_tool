@@ -67,8 +67,8 @@ Notes
   - Special characters and spaces become underscores
   - Dots in filenames are preserved
 
-## Features (implemented and open)
-Completed features:
+## Features
+Completed:
 - [x] Transform tasks to Obsidian-compatible markdown with YAML frontmatter
 - [x] Render checklist items as a "Subtasks" table
 - [x] Replace each "?" with "_" in filenames
@@ -78,7 +78,7 @@ Completed features:
 - [x] Move deleted files in a foldername/delted folder if --skip-completed isn't set
 - [x] Remove completedDateTime and reminderDateTime if not set
 
-Not implemented features:
+Not implemented (yet):
 - [ ] Implement nested folders for task organization
 - [ ] Add optional prefix/postfix property to all notes to indicate MsToDo source
 - [ ] Support for destination account operations (task creation via Graph API)
