@@ -86,6 +86,7 @@ Each task is exported as a Markdown file with:
 
 - Question marks (`?`) are individually replaced with underscores (`_`)
 - Double quotes (`\"`) are replaced with underscores (`_`)
+- Angle brackets (`<` and `>`) are replaced with underscores (`_`)
 - Spaces and special characters (`:`, `/`, `\`) become underscores
 - Dots (`.`) in filenames are preserved
 - If a file already exists:

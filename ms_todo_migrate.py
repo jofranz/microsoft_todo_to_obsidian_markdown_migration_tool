@@ -76,6 +76,8 @@ def safe_filename(title: str) -> str:
     # - Replace spaces and common path chars with underscore
     s = title.replace("?", "_")
     s = s.replace('"', "_")
+    # Replace angle brackets which are invalid/unsafe in filenames
+    s = s.replace("<", "_").replace(">", "_")
     # Then handle other special characters (spaces, colons, slashes, backslashes)
     s = re.sub(r"[:/\\\s]+", "_", s)
     if not s:
